@@ -1,0 +1,16 @@
+# Gowalla Dataset
+# Source: https://github.com/kuandeng/LightGCN/blob/master/Data/gowalla/train.txt
+#         https://github.com/kuandeng/LightGCN/blob/master/Data/gowalla/test.txt
+
+# Dataset Parameters
+dataset: gowalla
+benchmark_filename: ['train','test','test']
+
+# Fine-tuned Parameters
+lambda: 0.5
+rho: 5000
+theta_1: 0.2
+theta_2: 5.0
+eta: 0.01
+tol: 5.5e-3
+tau: 0.4

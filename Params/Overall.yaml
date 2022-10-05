@@ -1,0 +1,39 @@
+# General Parameters
+seed: 2026  #Choose in [2020,2022,2024,2026,2028,2030,2032]
+reproducibility: True
+
+# Evaluation Parameters
+eval_args:
+  split: {'RS':[0.7, 0.15, 0.15]}
+  order: RO
+  group_by: user
+  mode: full
+
+topk: [10, 20]
+metrics: ['Recall', 'NDCG']
+metric_decimal_place: 6
+
+# Dataset Default Parameters
+data_path: ./Data/
+load_col:
+    inter: [user_id, item_id]
+    user: [user_id]
+    item: [item_id]
+
+USER_ID_FIELD: user_id
+ITEM_ID_FIELD: item_id
+
+neg_sampling:
+  uniform: 1
+
+train_batch_size: 524288
+eval_batch_size: 1048576
+filter_inter_by_user_or_item: False
+
+# Model Default Parameters
+model: FPSR
+epochs: 1
+eval_step: 0
+eigenvectors: 256
+opti_iter: 50
+

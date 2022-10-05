@@ -1,0 +1,14 @@
+# Douban Dataset
+# Sources: https://github.com/librahu/HIN-Datasets-for-Recommendation-and-Network-Embedding/blob/master/Douban%20Book/user_book.dat
+
+# Dataset Paramater
+dataset: douban
+
+# Fine-tuned Parameters
+lambda: 0.2
+rho: 500
+theta_1: 0.8
+theta_2: 0.1
+eta: 1.0
+tol: 5e-3
+tau: 0.5

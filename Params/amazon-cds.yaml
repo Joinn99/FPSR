@@ -1,0 +1,15 @@
+# Amazon-cds Dataset
+# Source: https://github.com/xue-pai/UltraGCN/blob/main/data/amazoncds/train.txt
+#         https://github.com/xue-pai/UltraGCN/blob/main/data/amazoncds/test.txt
+
+# Dataset Paramater
+dataset: amazon-cds
+
+# Fine-tuned Parameters
+lambda: 0.2
+rho: 5000
+theta_1: 0.5
+theta_2: 5.0
+eta: 1.0
+tol: 4e-3
+tau: 0.3

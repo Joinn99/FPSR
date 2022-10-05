@@ -1,0 +1,16 @@
+# Yelp2018 Dataset
+# Source: https://github.com/kuandeng/LightGCN/blob/master/Data/yelp2018/train.txt
+#         https://github.com/kuandeng/LightGCN/blob/master/Data/yelp2018/test.txt
+
+# Dataset Paramaters
+dataset: yelp2018
+benchmark_filename: ['train','test','test']
+
+# Fine-tuned Parameters
+lambda: 0.5
+rho: 1e4
+theta_1: 0.6
+theta_2: 2.0
+eta: 0.1
+tol: 4e-3
+tau: 0.3
