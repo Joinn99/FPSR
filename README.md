@@ -1,6 +1,6 @@
 # FPSR
 
-**CuPy version** (Default) | [**PyTorch version**](https://github.com/Joinn99/FPSR/tree/torch)
+[**CuPy version**](https://github.com/Joinn99/FPSR/) (Default) | **PyTorch version**
 
 This is the official implementation of our *ACM The Web Conference 2023 (WWW 2023)* paper:
 > Tianjun Wei, Jianghong Ma, Tommy W.S. Chow. Fine-tuning Partition-aware Item Similarities for Efficient and Scalable Recommendation. [[arXiv](https://arxiv.org/abs/2207.05959)]
@@ -10,13 +10,13 @@ This is the official implementation of our *ACM The Web Conference 2023 (WWW 202
 </p>
 
 ## Requirements
-The model implementation ensures compatibility with the Recommendation Toolbox [RecBole](https://recbole.io/) (Github: [Recbole](https://github.com/RUCAIBox/RecBole)). This version employs [CuPy](https://cupy.dev/) for matrix storage and computation, and produces the results in the paper. In addition, we also offer a pure PyTorch version of FPSR model, which can be found [here](chttps://github.com/Joinn99/FPSR/tree/torch). 
+The model implementation ensures compatibility with the Recommendation Toolbox [RecBole](https://recbole.io/) (Github: [Recbole](https://github.com/RUCAIBox/RecBole)). This is the pure PyTorch version of FPSR model. 
 
 The requirements of the running environement:
 
-- Python: 3.8+
+- Python: 3.11+
 - RecBole: 1.1.1
-- CuPy: 0.10.5+
+- PyTorch: 1.13.0+
 
 ## Dataset
 Here we only put zip files of datasets in the respository due to the storage limits. To use the dataset, run

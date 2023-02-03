@@ -36,7 +36,7 @@ epochs: 1
 eval_step: 0
 eigenvectors: 256
 opti_iter: 50
-solver: lobpcg
+solver: svd
 
 lambda: 0.5
 rho: 5000
