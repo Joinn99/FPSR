@@ -23,8 +23,8 @@ load_col:
 USER_ID_FIELD: user_id
 ITEM_ID_FIELD: item_id
 
-neg_sampling:
-  uniform: 1
+train_neg_sample_args:
+  sample_num: 1
 
 train_batch_size: 524288
 eval_batch_size: 1048576
@@ -36,4 +36,12 @@ epochs: 1
 eval_step: 0
 eigenvectors: 256
 opti_iter: 50
+solver: lobpcg
 
+lambda: 0.5
+rho: 5000
+theta_1: 0.1
+theta_2: 1.0
+eta: 1.0
+tol: 5e-3
+tau: 0.2

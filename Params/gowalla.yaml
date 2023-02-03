@@ -12,5 +12,5 @@ rho: 5000
 theta_1: 0.2
 theta_2: 5.0
 eta: 0.01
-tol: 5.5e-3
+tol: 5e-3
 tau: 0.4

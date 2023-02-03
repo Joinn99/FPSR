@@ -1,7 +1,9 @@
         
 r"""
+    Author: Tianjun Wei (tjwei2-c@my.cityu.edu.hk)
     Name: model.py
-    Date: 2022/10/05
+    Created Date: 2022/10/05
+    Modified date: 2023/02/01
     Description: Fine-tuning Partition-aware Item Similarities for Efficient and Scalable Recommendation (FPSR)
 """
 import torch
@@ -9,7 +11,7 @@ import cupy as cp
 import numpy as np
 import scipy.sparse as sp
 
-from cupyx.scipy.sparse.linalg import lobpcg
+from cupyx.scipy.sparse.linalg import svds, lobpcg
 
 from recbole.utils import InputType
 from recbole.utils.enum_type import ModelType
@@ -31,13 +33,14 @@ class FPSR(GeneralRecommender):
         # Parameters for W
         self.eigen_dim = config['eigenvectors'] # Num of eigenvectors extracted for W
         self.lambda_ = config['lambda']         # Lambda
+        self.solver = config['solver']          # Solver of eigendecomposition
 
         # Parameters for optimization
         self.rho = config['rho']                # Rho
         self.theta_1 = config['theta_1']        # Theta_1
         self.theta_2 = config['theta_2']        # Theta_2
         self.eta = config['eta']                # Eta
-        self.opti_iter = config['opti_iter']      # Number of iteration
+        self.opti_iter = config['opti_iter']    # Number of iteration
         self.tol = config['tol']                # Threshold to filter out small values
 
         # Parameters for recusrive graph partitioning
@@ -73,13 +76,12 @@ class FPSR(GeneralRecommender):
         r"""
         Truncated singular value decomposition (SVD)
         """
-        m, n = mat.shape
-        if m > n or n < 50000:
+        if self.solver == 'lobpcg':
             _, V = lobpcg(mat.T @ mat, cp.random.rand(mat.shape[1], k), largest=True)
         else:
-            eig_v, user_emb = lobpcg(mat @ mat.T, cp.random.rand(mat.shape[0], k), largest=True)
-            V = mat.T @ user_emb / cp.sqrt(eig_v)
-        return V
+            _, _, V = svds(mat, 4*k, maxiter=10000)
+            V = V.T
+        return V[:, :k]
 
     def _norm_adj(self, item_list=None):
         r"""
@@ -106,7 +108,10 @@ class FPSR(GeneralRecommender):
         Graph biparitioning
         """
         V = self._svd(self._norm_adj(item_list), 2)
-        return cp.asnumpy(V[:, 1] >= 0)
+        split = cp.asnumpy(V[:, 1] >= 0)
+        if split.sum() == split.shape[0] or split.sum() == 0:
+            split = cp.asnumpy(V[:, 1] >= cp.median(V[:, 1]))
+        return split
 
     def update_S(self, item_list):
         r"""
