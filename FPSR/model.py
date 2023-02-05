@@ -3,7 +3,7 @@ r"""
     Name: model.py
     Created Date: 2022/10/05
     Modified date: 2023/02/01
-    Description: Fine-tuning Partition-aware Item Similarities for Efficient and Scalable Recommendation (FPSR)
+    Description: Fine-tuning Partition-aware Item Similarities for Efficient and Scalable Recommendation (FPSR) - PyTorch Version
 """
 import torch
 import numpy as np
@@ -36,7 +36,6 @@ class FPSR(GeneralRecommender):
         self.eta = config['eta']                # Eta
         self.opti_iter = config['opti_iter']    # Number of iteration
         self.tol = config['tol']                # Threshold to filter out small values
-
 
         # Parameters for recusrive graph partitioning
         self.tau = config['tau']  # Size ratio of partitions
@@ -81,7 +80,7 @@ class FPSR(GeneralRecommender):
         if self.solver == 'lobpcg':
             _, V = torch.lobpcg(A=torch.sparse.mm(mat.T, mat), X=torch.rand(mat.shape[1], k).to(self.device))
         else:
-            _, _, V = torch.svd_lowrank(mat, q=max(4*k, 32))
+            _, _, V = torch.svd_lowrank(mat, q=max(4*k, 32), niter=10)
         return V[:, :k]
 
     def _norm_adj(self, item_list=None):
@@ -120,7 +119,10 @@ class FPSR(GeneralRecommender):
         Graph biparitioning
         """
         V = self._svd(self._norm_adj(item_list), 2)
-        return V[:, 1] >= 0
+        split = V[:, 1] >= 0
+        if split.sum() == split.shape[0] or split.sum() == 0:
+            split = V[:, 1] >= torch.median(V[:, 1])
+        return split
 
     def update_S(self, item_list) -> None:
         r"""
