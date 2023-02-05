@@ -6,7 +6,7 @@ This is the official implementation of our *ACM The Web Conference 2023 (WWW 202
 > Tianjun Wei, Jianghong Ma, Tommy W.S. Chow. Fine-tuning Partition-aware Item Similarities for Efficient and Scalable Recommendation. [[arXiv](https://arxiv.org/abs/2207.05959)]
 
 <p align="center" width="100%">
-    <kbd><img width="50%" src="https://raw.githubusercontent.com/Joinn99/RepositoryResource/master/FPSR.svg"> </kbd>
+    <kbd><img width="100%" src="https://raw.githubusercontent.com/Joinn99/RepositoryResource/master/FPSR.svg"> </kbd>
 </p>
 
 ## Requirements

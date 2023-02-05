@@ -3,8 +3,8 @@ r"""
     Author: Tianjun Wei (tjwei2-c@my.cityu.edu.hk)
     Name: model.py
     Created Date: 2022/10/05
-    Modified date: 2023/02/01
-    Description: Fine-tuning Partition-aware Item Similarities for Efficient and Scalable Recommendation (FPSR)
+    Modified date: 2023/02/05
+    Description: Fine-tuning Partition-aware Item Similarities for Efficient and Scalable Recommendation (FPSR) - CuPy Version
 """
 import torch
 import cupy as cp
