@@ -10,7 +10,7 @@ This is the official implementation of our *ACM The Web Conference 2023 (WWW 202
 </p>
 
 ## Requirements
-The model implementation ensures compatibility with the Recommendation Toolbox [RecBole](https://recbole.io/) (Github: [Recbole](https://github.com/RUCAIBox/RecBole)). This version employs [CuPy](https://cupy.dev/) for matrix storage and computation, and produces the results in the paper. In addition, we also offer a pure PyTorch version of FPSR model, which can be found [here](chttps://github.com/Joinn99/FPSR/tree/torch). 
+The model implementation ensures compatibility with the Recommendation Toolbox [RecBole](https://recbole.io/) (Github: [Recbole](https://github.com/RUCAIBox/RecBole)). This version employs [CuPy](https://cupy.dev/) for matrix storage and computation, and produces the results in the paper. In addition, we also offer a pure PyTorch version of FPSR model, which can be found [here](https://github.com/Joinn99/FPSR/tree/torch). 
 
 The requirements of the running environement:
 
