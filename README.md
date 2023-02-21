@@ -4,7 +4,7 @@
 [![RecBole](https://img.shields.io/badge/RecBole-1.1.1-orange)](https://recbole.io/)
 [![arXiv](https://img.shields.io/badge/arXiv-2207.05959-red)](https://arxiv.org/abs/2207.05959) 
 [![License](https://img.shields.io/github/license/Joinn99/FPSR)](https://github.com/Joinn99/FPSR/blob/master/LICENSE.md)
-[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/Joinn99/FPSR/blob/torch/FPSR_Demonstration.ipynb)
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/Joinn99/FPSR/blob/torch/FPSR%20Demonstration.ipynb)
 
 **PyTorch version** (Default) | [**CuPy version**](https://github.com/Joinn99/FPSR/)
 
@@ -55,7 +55,7 @@ The script `run.py` is used to reproduced the results presented in paper. Train 
 python run.py --dataset DATASET_NAME
 ```
 ## Google Colab
-We also provide Colab notebook version of FPSR, you can click [here](https://colab.research.google.com/github/Joinn99/FPSR/blob/torch/FPSR_Demonstration.ipynb) to open Google Colab, select the runtime type as *GPU*, and run the model.
+We also provide Colab notebook version of FPSR, you can click [here](https://colab.research.google.com/github/Joinn99/FPSR/blob/torch/FPSR%20Demonstration.ipynb) to open Google Colab, select the runtime type as *GPU*, and run the model.
 
 ## Citation
 If you wish, please cite the following paper:
