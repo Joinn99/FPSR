@@ -53,7 +53,8 @@ class FPSR(GeneralRecommender):
 
         # TRAINING PROCESS
         # Calaulate W and generate first split
-        first_split = self.update_W()
+        self.update_W()
+        first_split = self.partitioning(self.V)  
         # Recursive paritioning and item similarity modeling in partition 1
         self.update_S(np.arange(self.n_items)[np.where(first_split)]) 
         # Recursive paritioning and item similarity modeling in partition 2
@@ -93,7 +94,7 @@ class FPSR(GeneralRecommender):
             inter_mat = self.inter_mat[:, item_list]
             return cp.sparse.diags(self._degree(inter_mat, axis=1)) @ inter_mat @ cp.sparse.diags(self.d_i.flatten()[item_list])
             
-    def update_W(self):
+    def update_W(self) -> None:
         r"""
         Update W
         (Only store V and D_I instead of W)
@@ -101,13 +102,11 @@ class FPSR(GeneralRecommender):
         self.d_i = self._degree(axis=0).reshape(-1, 1)
         self.d_i_inv = self._degree(axis=0, exp=0.5).reshape(1, -1)
         self.V = self._svd(self._norm_adj(), self.eigen_dim)
-        return cp.asnumpy(self.V[:, 1] >= 0)
 
-    def partitioning(self, item_list):
+    def partitioning(self, V) -> torch.Tensor:
         r"""
         Graph biparitioning
         """
-        V = self._svd(self._norm_adj(item_list), 2)
         split = cp.asnumpy(V[:, 1] >= 0)
         if split.sum() == split.shape[0] or split.sum() == 0:
             split = cp.asnumpy(V[:, 1] >= cp.median(V[:, 1]))
@@ -140,7 +139,7 @@ class FPSR(GeneralRecommender):
             print("Node Num: {:5d} Weight Matrix Non-zero: {:8d}".format(comm_ae.shape[0], comm_ae.nnz))
         else:
             # If the partition size is larger than size limit, perform graph partitioning on this partition.
-            split = self.partitioning(item_list)
+            split = self.partitioning(self._svd(self._norm_adj(item_list), 2))
             self.update_S(item_list[np.where(split)])
             self.update_S(item_list[np.where(~split)])
     

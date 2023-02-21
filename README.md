@@ -1,6 +1,10 @@
 # FPSR
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.76097887.svg)](https://doi.org/10.5281/zenodo.7609787)
+[![RecBole](https://img.shields.io/badge/RecBole-1.1.1-orange)](https://recbole.io/)
+[![arXiv](https://img.shields.io/badge/arXiv-2207.05959-red)](https://arxiv.org/abs/2207.05959) 
+[![License](https://img.shields.io/github/license/Joinn99/FPSR)](https://github.com/Joinn99/FPSR/blob/master/LICENSE.md)
 
-**CuPy version** (Default) | [**PyTorch version**](https://github.com/Joinn99/FPSR/tree/torch)
+[**PyTorch version**](https://github.com/Joinn99/FPSR/tree/torch) (Default) | **CuPy version**
 
 This is the official implementation of our *ACM The Web Conference 2023 (WWW 2023)* paper:
 > Tianjun Wei, Jianghong Ma, Tommy W.S. Chow. Fine-tuning Partition-aware Item Similarities for Efficient and Scalable Recommendation. [[arXiv](https://arxiv.org/abs/2207.05959)]
