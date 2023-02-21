@@ -6,7 +6,7 @@
 [![License](https://img.shields.io/github/license/Joinn99/FPSR)](https://github.com/Joinn99/FPSR/blob/master/LICENSE.md)
 [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/Joinn99/FPSR/blob/torch/FPSR%20Demonstration.ipynb)
 
-**PyTorch version** (Default) | [**CuPy version**](https://github.com/Joinn99/FPSR/)
+**PyTorch version** (Default) | [**CuPy version**](https://github.com/Joinn99/FPSR/tree/cupy)
 
 This is the official implementation of our *ACM The Web Conference 2023 (WWW 2023)* paper:
 > Tianjun Wei, Jianghong Ma, Tommy W.S. Chow. Fine-tuning Partition-aware Item Similarities for Efficient and Scalable Recommendation. [[arXiv](https://arxiv.org/abs/2207.05959)]
