@@ -48,7 +48,7 @@ class RecTrainer(object):
         _, _ = self.trainer.fit(self.train_data, None, verbose=verbose, show_progress=False)
         load_best = False if self.trainer.model.type == ModelType.TRADITIONAL else True
         self.logger.info("Start evalutaion:")
-        test_result = self.trainer.eval_epoch(self.test_data) if self.config['input_tag'] else self.trainer.evaluate(self.test_data, load_best_model=load_best)
+        test_result = self.trainer.evaluate(self.test_data, load_best_model=load_best, show_progress=True)
         os.remove(self.trainer.saved_model_file)
         shutil.rmtree(os.path.join('Log/{:s}'.format(self.config['model']), cur_time))
         if os.path.exists('log_tensorboard'):

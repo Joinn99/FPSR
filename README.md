@@ -1,6 +1,12 @@
 # FPSR
 
-[**CuPy version**](https://github.com/Joinn99/FPSR/) (Default) | **PyTorch version**
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.76097887.svg)](https://doi.org/10.5281/zenodo.7609787)
+[![RecBole](https://img.shields.io/badge/RecBole-1.1.1-orange)](https://recbole.io/)
+[![arXiv](https://img.shields.io/badge/arXiv-2207.05959-red)](https://arxiv.org/abs/2207.05959) 
+[![License](https://img.shields.io/github/license/Joinn99/FPSR)](https://github.com/Joinn99/FPSR/blob/master/LICENSE.md)
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github.com/Joinn99/FPSR/blob/torch/FPSR_Demonstration.ipynb)
+
+**PyTorch version** (Default) | [**CuPy version**](https://github.com/Joinn99/FPSR/)
 
 This is the official implementation of our *ACM The Web Conference 2023 (WWW 2023)* paper:
 > Tianjun Wei, Jianghong Ma, Tommy W.S. Chow. Fine-tuning Partition-aware Item Similarities for Efficient and Scalable Recommendation. [[arXiv](https://arxiv.org/abs/2207.05959)]
@@ -14,9 +20,9 @@ The model implementation ensures compatibility with the Recommendation Toolbox [
 
 The requirements of the running environement:
 
-- Python: 3.11+
+- Python: 3.8+
 - RecBole: 1.1.1
-- PyTorch: 1.13.0+
+- PyTorch: 1.9.0+
 
 ## Dataset
 Here we only put zip files of datasets in the respository due to the storage limits. To use the dataset, run
@@ -48,6 +54,8 @@ The script `run.py` is used to reproduced the results presented in paper. Train 
 ```bash
 python run.py --dataset DATASET_NAME
 ```
+## Google Colab
+We also provide Colab notebook version of FPSR, you can click [here](https://colab.research.google.com/github.com/Joinn99/FPSR/blob/torch/FPSR_Demonstration.ipynb) to open Google Colab, select the runtime type as *GPU*, and run the model.
 
 ## Citation
 If you wish, please cite the following paper:

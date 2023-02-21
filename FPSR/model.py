@@ -1,10 +1,17 @@
+# -*- coding: utf-8 -*-
+# @Time   : 2023/2/21
+# @Author : Tianjun Wei
+# @Email  : tjwei2-c@my.cityu.edu.hk
+
 r"""
-    Author: Tianjun Wei (tjwei2-c@my.cityu.edu.hk)
-    Name: model.py
-    Created Date: 2022/10/05
-    Modified date: 2023/02/01
-    Description: Fine-tuning Partition-aware Item Similarities for Efficient and Scalable Recommendation (FPSR) - PyTorch Version
+FPSR
+################################################
+Reference:
+    Tianjun Wei et al. "Fine-tuning Partition-aware Item Similarities for Efficient and Scalable Recommendation." in WWW 2023.
+Reference code:
+    https://github.com/Joinn99/FPSR/tree/torch
 """
+
 import torch
 import numpy as np
 
@@ -13,35 +20,33 @@ from recbole.utils.enum_type import ModelType
 from recbole.model.abstract_recommender import GeneralRecommender
 
 class FPSR(GeneralRecommender):
-    r"""
-    Fine-tuning Partition-aware Item Similarities for Efficient and Scalable Recommendation
+    r"""FPSR is an item-based model for collaborative filtering.
+
+    FPSR introduces graph partitioning on the item-item adjacency graph, aiming to restrict the scale of item similarity modeling.
+    Specifically, it shows that the spectral information of the original item-item adjacency graph is well in preserving global-level information.
+    Then, the global-level information is added to fine-tune local item similarities with a new data augmentation strategy acted as partition-aware
+    prior knowledge, jointly to cope with the information loss brought by partitioning.
     """
     input_type = InputType.POINTWISE
     type = ModelType.TRADITIONAL
 
     def __init__(self, config, dataset):
-        r"""
-        Model initialization and training.
-        """
         super().__init__(config, dataset)
-        # Parameters for W
-        self.eigen_dim = config['eigenvectors'] # Num of eigenvectors extracted for W
-        self.lambda_ = config['lambda']         # Lambda
-        self.solver = config['solver']          # Solver of eigendecomposition
 
-        # Parameters for optimization
-        self.rho = config['rho']                # Rho
-        self.theta_1 = config['theta_1']        # Theta_1
-        self.theta_2 = config['theta_2']        # Theta_2
-        self.eta = config['eta']                # Eta
-        self.opti_iter = config['opti_iter']    # Number of iteration
-        self.tol = config['tol']                # Threshold to filter out small values
-
-        # Parameters for recusrive graph partitioning
-        self.tau = config['tau']  # Size ratio of partitions
+        # load parameters info
+        self.eigen_dim = config['eigenvectors'] # int type: Num of eigenvectors extracted for W
+        self.lambda_ = config['lambda']         # float32 type: Lambda
+        self.rho = config['rho']                # float32 type: Rho
+        self.theta_1 = config['theta_1']        # float32 type: Theta_1
+        self.theta_2 = config['theta_2']        # float32 type: Theta_2
+        self.eta = config['eta']                # float32 type: Eta
+        self.tol = config['tol']                # float32 type: Threshold to filter out small values
+        self.tau = config['tau']                # float32 type: Size ratio of partitions
         
-        # Dummy Params
+        # dummy params for recbole
         self.dummy_param = torch.nn.Parameter(torch.zeros(1))   # Dummy pytorch parameters required by Recbole
+
+        # load dataset info
         self.inter = dataset.inter_matrix(form='coo')   # User-item interaction matrix
         self.inter = torch.sparse_coo_tensor(
                             torch.LongTensor(np.array([self.inter.row, self.inter.col])),
@@ -49,43 +54,47 @@ class FPSR(GeneralRecommender):
                             size=self.inter.shape, dtype=torch.float
                         ).coalesce().to(self.device)
         
+        # storage variables for item similarity matrix S
         self.S_indices = []
         self.S_values = []
 
-        # TRAINING PROCESS
-        # Calaulate W and generate first split
-        first_split = self.update_W()
-        # Recursive paritioning and item similarity modeling in partition 1
-        self.update_S(torch.arange(self.n_items, device=self.device)[torch.where(first_split)[0]])
-        # Recursive paritioning and item similarity modeling in partition 2
-        self.update_S(torch.arange(self.n_items, device=self.device)[torch.where(~first_split)[0]])
+        # training process
+        self.update_W()   
+        first_split = self.partitioning(self.V)                                                     # calaulate W and generate first split
+        self.update_S(torch.arange(self.n_items, device=self.device)[torch.where(first_split)[0]])  # recursive paritioning #1
+        self.update_S(torch.arange(self.n_items, device=self.device)[torch.where(~first_split)[0]]) # recursive paritioning #2
         
         self.S = torch.sparse_coo_tensor(indices=torch.cat(self.S_indices, dim=1),
                                          values=torch.cat(self.S_values, dim=0),
-                                         size=(self.n_items, self.n_items)).coalesce().T
+                                         size=(self.n_items, self.n_items)).coalesce().T.to_sparse_csr()
+        del self.S_indices, self.S_values
 
-    def _degree(self, inter_mat=None, dim=0, exp=-0.5):
-        r"""
-        Degree of nodes
+    def _degree(self, inter_mat=None, dim=0, exp=-0.5) -> torch.Tensor:
+        r"""Get the degree of users and items.
+        
+        Returns:
+            Tensor of the node degrees.
         """
         if inter_mat is None:
             inter_mat = self.inter
         d_inv = torch.nan_to_num(torch.sparse.sum(inter_mat,dim=dim).to_dense().pow(exp), nan=0, posinf=0, neginf=0)
         return d_inv
 
-    def _svd(self, mat, k):
-        r"""
-        Truncated singular value decomposition (SVD)
+    def _svd(self, mat, k) -> torch.Tensor:
+        r"""Perform Truncated singular value decomposition (SVD) on
+        the input matrix, return top-k eigenvectors.
+        
+        Returns:
+            Tok-k eigenvectors.
         """
-        if self.solver == 'lobpcg':
-            _, V = torch.lobpcg(A=torch.sparse.mm(mat.T, mat), X=torch.rand(mat.shape[1], k).to(self.device))
-        else:
-            _, _, V = torch.svd_lowrank(mat, q=max(4*k, 32), niter=10)
+        _, _, V = torch.svd_lowrank(mat, q=max(4*k, 32), niter=10)
         return V[:, :k]
 
-    def _norm_adj(self, item_list=None):
-        r"""
-        Normalized adjacency matrix
+    def _norm_adj(self, item_list=None) -> torch.Tensor:
+        r"""Get the normalized item-item adjacency matrix for a group of items.
+        
+        Returns:
+            Sparse tensor of the normalized item-item adjacency matrix.
         """
         if item_list is None:
             vals = self.inter.values() * self.d_i[self.inter.indices()[1]].squeeze()
@@ -104,29 +113,29 @@ class FPSR(GeneralRecommender):
             ).coalesce()
     
 
-    def update_W(self) -> torch.Tensor:
-        r"""
-        Update W
-        (Only store V and D_I instead of W)
+    def update_W(self) -> None:
+        r"""Derive the global-level information metrix W, and use the eigenvector
+        with the second largest eigenvalue to perform first graph partitioning.
+        
         """
         self.d_i = self._degree(dim=0).reshape(-1, 1)
         self.d_i_inv = self._degree(dim=0, exp=0.5).reshape(1, -1)
         self.V = self._svd(self._norm_adj(), self.eigen_dim)
-        return self.V[:, 1] >= 0
 
-    def partitioning(self, item_list) -> torch.Tensor:
-        r"""
-        Graph biparitioning
+    def partitioning(self, V) -> torch.Tensor:
+        r"""Perform graph bipartitioning.
+        
+        Returns:
+            Paritioning result.
         """
-        V = self._svd(self._norm_adj(item_list), 2)
         split = V[:, 1] >= 0
         if split.sum() == split.shape[0] or split.sum() == 0:
             split = V[:, 1] >= torch.median(V[:, 1])
         return split
 
     def update_S(self, item_list) -> None:
-        r"""
-        Update S (recursive)
+        r"""Derive partition-aware item similarity matrix S in each partition.
+        
         """
         if item_list.shape[0] <= self.tau * self.n_items:
             # If the partition size is samller than size limit, model item similarity for this partition.
@@ -141,16 +150,17 @@ class FPSR(GeneralRecommender):
             comm_ae = torch.where(comm_ae >= self.tol, comm_ae, 0).to_sparse_coo()
             self.S_indices.append(item_list[comm_ae.indices()])
             self.S_values.append(comm_ae.values())
-            print("Node Num: {:5d} Weight Matrix Non-zero: {:8d}".format(comm_ae.shape[0], comm_ae._nnz()))
         else:
             # If the partition size is larger than size limit, perform graph partitioning on this partition.
-            split = self.partitioning(item_list)
+            split = self.partitioning(self._svd(self._norm_adj(item_list), 2))
             self.update_S(item_list[torch.where(split)[0]])
             self.update_S(item_list[torch.where(~split)[0]])
     
     def item_similarity(self, inter_mat, V, d_i, d_i_inv) -> torch.Tensor:
-        r"""
-        Similarity modeling in each partition
+        r"""Update partition-aware item similarity matrix S in a specific partition.
+        
+        Returns:
+            Partition-aware item similarity matrix of a partition.
         """
         # Initialize
         Q_hat = inter_mat + self.theta_2 * torch.diag(torch.pow(d_i_inv.squeeze(), 2)) + self.eta
@@ -159,7 +169,7 @@ class FPSR(GeneralRecommender):
         del Q_hat
         Phi = torch.zeros_like(Q_inv, device=self.device)
         S = torch.zeros_like(Q_inv, device=self.device)
-        for _ in range(self.opti_iter):
+        for _ in range(50):
             # Iteration
             Z_tilde = Z_aux + Q_inv @ (self.rho * (S - Phi))
             gamma = torch.diag(Z_tilde) / (torch.diag(Q_inv) + 1e-10)
@@ -169,27 +179,22 @@ class FPSR(GeneralRecommender):
         return S
 
     def forward(self):
-        r"""
-        Abstract method of GeneralRecommender in RecBole (not used)
-        """
         pass
 
     def calculate_loss(self, interaction):
-        r"""
-        Abstract method of GeneralRecommender in RecBole (not used)
-        """
         return torch.nn.Parameter(torch.zeros(1))
 
     def predict(self, interaction):
-        r"""
-        Abstract method of GeneralRecommender in RecBole (not used)
-        """
-        raise NotImplementedError
+        user = self.inter.index_select(dim=0, index=interaction[self.USER_ID]).to_dense()
+        item = self.S.index_select(dim=1, index=interaction[self.ITEM_ID]).to_dense()
+        d_i_inv = self.d_i_inv[:, interaction[self.ITEM_ID]]
+        V = self.V[interaction[self.ITEM_ID], :]
+        
+        r = torch.mul(item.T, user).sum(dim=-1)
+        r += self.lambda_ * torch.mul(user * self.d_i.T @ self.V, V * d_i_inv.T).sum(dim=-1)
+        return r
 
     def full_sort_predict(self, interaction) -> torch.Tensor:
-        r"""
-        Recommend items for the input users
-        """
         user = self.inter.index_select(dim=0, index=interaction[self.USER_ID]).to_dense()
         r = torch.sparse.mm(self.S, user.T).T
         r += self.lambda_ * user * self.d_i.T @ self.V @ self.V.T * self.d_i_inv
