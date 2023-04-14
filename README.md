@@ -2,7 +2,7 @@
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.76097887.svg)](https://doi.org/10.5281/zenodo.7609787)
 [![RecBole](https://img.shields.io/badge/RecBole-1.1.1-orange)](https://recbole.io/)
 [![arXiv](https://img.shields.io/badge/arXiv-2207.05959-red)](https://arxiv.org/abs/2207.05959) 
-[![License](https://img.shields.io/github/license/Joinn99/FPSR)](https://github.com/Joinn99/FPSR/blob/master/LICENSE.md)
+[![License](https://img.shields.io/github/license/Joinn99/FPSR)](https://github.com/Joinn99/FPSR/blob/cupy/LICENSE.md)
 
 [**PyTorch version**](https://github.com/Joinn99/FPSR/tree/torch) (Default) | **CuPy version**
 
@@ -48,7 +48,7 @@ For the format of each dataset file, please refer to [RecBole API](https://recbo
 For each dataset, the optimal hyperparameters are stored in `Params/[DATASET].yaml`. To tune the hyperparamters, modify the corresponding values in the file for each dataset.
 
 ## Running
-The script `run.py` is used to reproduced the results presented in paper. Train and avaluate FPSR on a specific dataset, run
+The script `run.py` is used to reproduce the results presented in paper. Train and evaluate FPSR on a specific dataset, run
 ```bash
 python run.py --dataset DATASET_NAME
 ```
@@ -57,10 +57,17 @@ python run.py --dataset DATASET_NAME
 If you wish, please cite the following paper:
 
 ```bibtex
-@misc{FPSR,
-  doi = {10.48550/ARXIV.2207.05959},
-  author = {Wei, Tianjun and Ma, Jianghong and Chow, Tommy W. S.},
-  title = {Fine-tuning Partition-aware Item Similarities for Efficient and Scalable Recommendation},
-  year = {2023},
+@InProceedings{Wei2023a,
+  author    = {{Wei}, Tianjun and {Ma}, Jianghong and {Chow}, Tommy W.~S.},
+  booktitle = {Proceedings of the ACM Web Conference 2023},
+  title     = {Fine-tuning Partition-aware Item Similarities for Efficient and Scalable Recommendation},
+  year      = {2023},
+  address   = {New York, NY, USA},
+  publisher = {Association for Computing Machinery},
+  series    = {WWW '23},
+  doi       = {10.1145/3543507.3583240},
+  location  = {Austin, TX, USA},
+  numpages  = {11},
+  url       = {https://doi.org/10.1145/3543507.3583240},
 }
 ```
