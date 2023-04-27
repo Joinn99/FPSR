@@ -1,5 +1,5 @@
 # FPSR
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.76097887.svg)](https://doi.org/10.5281/zenodo.7609787)
+[![DOI](https://img.shields.io/badge/DOI-10.1145%2F3543507.3583240-ff69b4)](https://doi.org/10.1145/3543507.3583240)
 [![RecBole](https://img.shields.io/badge/RecBole-1.1.1-orange)](https://recbole.io/)
 [![arXiv](https://img.shields.io/badge/arXiv-2207.05959-red)](https://arxiv.org/abs/2207.05959) 
 [![License](https://img.shields.io/github/license/Joinn99/FPSR)](https://github.com/Joinn99/FPSR/blob/cupy/LICENSE.md)
@@ -57,17 +57,19 @@ python run.py --dataset DATASET_NAME
 If you wish, please cite the following paper:
 
 ```bibtex
-@InProceedings{Wei2023a,
-  author    = {{Wei}, Tianjun and {Ma}, Jianghong and {Chow}, Tommy W.~S.},
-  booktitle = {Proceedings of the ACM Web Conference 2023},
-  title     = {Fine-tuning Partition-aware Item Similarities for Efficient and Scalable Recommendation},
-  year      = {2023},
-  address   = {New York, NY, USA},
-  publisher = {Association for Computing Machinery},
-  series    = {WWW '23},
-  doi       = {10.1145/3543507.3583240},
-  location  = {Austin, TX, USA},
-  numpages  = {11},
-  url       = {https://doi.org/10.1145/3543507.3583240},
+@inproceedings{10.1145/3543507.3583240,
+author = {Wei, Tianjun and Ma, Jianghong and Chow, Tommy W. S.},
+title = {Fine-Tuning Partition-Aware Item Similarities for Efficient and Scalable Recommendation},
+year = {2023},
+isbn = {9781450394161},
+publisher = {Association for Computing Machinery},
+address = {New York, NY, USA},
+url = {https://doi.org/10.1145/3543507.3583240},
+doi = {10.1145/3543507.3583240},
+pages = {823–832},
+numpages = {10},
+keywords = {Recommender System, Similarity Measuring, Collaborative Filtering, Graph Partitioning},
+location = {Austin, TX, USA},
+series = {WWW '23}
 }
 ```
